@@ -41,14 +41,16 @@ app.post('/image_children', async (req, res) => {
                 url: secrets.ganurl+'/children',
                 method: 'POST',
                 json: true,
-                form: { vector: JSON.stringify(vector), label: JSON.stringify(label) }
+                form: {
+                    label: JSON.stringify(label),
+                    vector: JSON.stringify(vector)
+                }
             })
             console.timeEnd('make_children')
             await knex('image').where({ id }).update({ state: 1 })
             console.time('save_results')
             const children = await save_results({ imgs, vectors, labels, parent1: id })
             console.timeEnd('save_results')
-            console.log('Got new childrennnn')
             return res.json(children)
         } else if (state == 1) {
             const children = await knex.from('image').select('key').where({ parent1: id })
@@ -75,5 +77,35 @@ app.get('/random', (req, res) => {
     })
 })
 
+app.post('/mix_images', async (req, res) => {
+    const key1 = req.body.key1
+    const key2 = req.body.key2
+    if (!key1 || !key2) return res.sendStatus(400)
+    try {
+        const image1 = await knex.from('image').where({ key:key1 }).first()
+        const image2 = await knex.from('image').where({ key:key2 }).first()
+
+        const [ imgs, vectors, labels ] = await request({
+            url: secrets.ganurl+'/mix_images',
+            method: 'POST',
+            json: true,
+            form: {
+                label1: JSON.stringify(image1.label),
+                label2: JSON.stringify(image2.label),
+                vector1: JSON.stringify(image1.vector),
+                vector2: JSON.stringify(image2.vector)
+            }
+        })
+        const children = await save_results({ imgs, vectors, labels,
+                                              parent1: image1.id,
+                                              parent2: image2.id })
+        return res.json(children)
+    } catch(err) {
+        console.log('Error: /mix', err)
+        return res.sendStatus(500)
+    }
+})
+
 app.get('/', (req, res) => res.redirect('/random'))
+app.get('/mix', (req, res) => res.render('mix'))
 app.listen(port, () => console.log('Server running on', port))

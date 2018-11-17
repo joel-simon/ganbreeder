@@ -14,7 +14,7 @@ html
             h3 Which image is most interesting?
             br
         .image_container.content
-            - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/'
+            - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
             for key in keys
                 a.imglink(href='/i?k='+key)
                     img(src=root+key+'.jpeg')

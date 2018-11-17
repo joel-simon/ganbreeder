@@ -1,0 +1,62 @@
+doctype html
+html
+    head
+        title Gan Breeder
+        meta(charset="utf-8")
+        meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
+        meta(name="Description", content="Generate images by exploring latent space.")
+        link(href="index.css" rel="stylesheet")
+        style.
+            form.mixinput input[type=text] {
+                width: 200px;
+            }
+            input.submit {
+                padding: 16px 20px;
+                margin: 8px 0;
+                width: 100px;
+                cursor: pointer;
+                opacity: 0.9;
+                font-size: 1.2em;
+            }
+            .container {
+                text-align: center;
+            }
+            .container img {
+                width: 128px;
+                height: 128px;
+                margin-top: 10px;
+                margin-right: 25px;
+                margin-left: 25px;
+            }
+    body
+        - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
+        header
+            h1 Gan-Breeder
+            h3 Paste in two ganbreeder links to mix
+            br
+
+        form.mixinput(style='text-align:center;')
+            input.parent1(type='text', value='http://localhost:8888/i?k=6dcd28d5be4e6f8fd88567d6', placeholder='Enter url', required)
+            input.parent2(type='text', value='http://localhost:8888/i?k=9d0bd089f5f9ef1e1bf3512b', placeholder='Enter url', required)
+
+            br
+            input.submit(type='submit', value='Submit')
+
+        .container()
+            img.parent
+            img.parent
+
+        .image_container#loading_container(style='display:none')
+            img.loading(src="loading.gif", style='width:50%;')
+            p Loading Children
+
+        .image_container.content(style='display:none')
+            - for (i = 0; i < 12; i ++) {
+                a.imglink()
+                    img()
+            - }
+        #footer
+        script.
+            const root = "#{root}";
+        script(src="utils.js")
+        script(src="mix.js")
