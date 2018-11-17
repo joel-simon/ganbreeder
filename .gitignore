@@ -1,6 +1,6 @@
 modules/
 .ipynb_checkpoints/
-server/secrets.json
-server/node_mdules/
+server/secrets.js
+server/node_modules/
 lambda/
 testing.py

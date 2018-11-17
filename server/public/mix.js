@@ -16,6 +16,12 @@ function oninput(i) {
     } catch (e) { }
 }
 
+const query = new URLSearchParams(window.location.search)
+if (query.has('parent1')) {
+    const url = window.location.origin + '/i?k=' + query.get('parent1')
+    textinput[0].value = url
+}
+
 for (let i = 0; i < textinput.length; i++) {
     oninput(i)
     textinput[i].oninput = () => oninput(i)

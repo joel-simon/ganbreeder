@@ -53,7 +53,7 @@ app.post('/image_children', async (req, res) => {
             console.timeEnd('save_results')
             return res.json(children)
         } else if (state == 1) {
-            const children = await knex.from('image').select('key').where({ parent1: id })
+            const children = await knex.from('image').select('key').where({ parent1: id, parent2:null })
             if (children.length) {
                 return res.json(children)
             }
