@@ -1,0 +1,23 @@
+doctype html
+html
+    head
+        title Gan Breeder
+        meta(charset="utf-8")
+        meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
+        meta(name="Description", content="Generate images by exploring latent space.")
+        link(href="index.css" rel="stylesheet")
+    body
+        header
+            //- .container
+            h1 Gan-Breeder
+
+            h3 Which image is most interesting?
+            br
+        .image_container.content
+            - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/'
+            for key in keys
+                a.imglink(href='/i?k='+key)
+                    img(src=root+key+'.jpeg')
+
+        #footer
+        script(src="index.js")

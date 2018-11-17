@@ -1,0 +1,23 @@
+{
+  "name": "ganbreeder",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Joel Simon",
+  "license": "ISC",
+  "dependencies": {
+    "aws": "0.0.3-2",
+    "aws-sdk": "^2.358.0",
+    "express": "^4.16.4",
+    "gm": "^1.23.1",
+    "knex": "^0.15.2",
+    "pg": "^7.6.1",
+    "pug": "^2.0.3",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  }
+}

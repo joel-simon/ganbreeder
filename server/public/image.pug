@@ -1,0 +1,56 @@
+doctype html
+html
+    head
+        title Gan Breeder
+        meta(charset="utf-8")
+        meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
+        meta(name="Description", content="Generate images by exploring latent space.")
+        link(href="index.css" rel="stylesheet" media="screen")
+    body
+        - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
+        header
+            .container
+                h1 Gan-Breeder
+        section
+            //- #links
+                a(href='/random') Random
+                br
+                a(href='foo') Mix Images
+                //- br
+                //- a(href='foo') Image Info
+                //- br
+                //- a(href='foo') Code
+            .container.top
+                #links
+                    if pkey
+                        .awrap
+                            a(href='/i?k='+pkey) parent
+                    .awrap
+                        a(href='/random') random
+                    .awrap
+                        a(href='foo') mix
+
+                    //- if pkey
+                    //-     a.imglink(href='/i?k='+pkey)
+                    //-         img(src=root+pkey+'.jpeg')
+                        //- p(style='position:relative;') Parent
+
+                img.image(src=root+key+'.jpeg')
+                //- .option.cross
+                    //- p(style='position:relative;top:84px;') Cross
+
+            .image_container#loading_container
+                img.loading(src="loading.gif", style='width:50%;')
+                p Loading Children
+
+            .image_container.content(style='display:hidden')
+                - for (i = 0; i < 12; i ++) {
+                    a.imglink()
+                        img()
+                - }
+        #footer
+        script.
+            const key = "#{key}"
+            const root = "#{root}"
+        script(src="utils.js")
+        script(src="image.js")
