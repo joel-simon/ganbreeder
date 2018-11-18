@@ -1,11 +1,11 @@
 doctype html
 html
     head
-        title GanBreeder
+        title Ganbreeder
         meta(charset="utf-8")
         meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
 
-        meta(property="og:title", content="GanBreeder")
+        meta(property="og:title", content="Ganbreeder")
         meta(property="og:description", content="A collaborative tool for discovering images.")
         meta(property="og:image", content=src='/image/screenshot.jpg')
         meta(property="og:image:width", content="800")
@@ -15,7 +15,7 @@ html
 
         meta(name="twitter:card", content="app")
         meta(name="twitter:creator", content="@_joelsimon")
-        meta(name="twitter:title", content="GanBreeder")
+        meta(name="twitter:title", content="Ganbreeder")
         meta(name="twitter:image", content="/image/screenshot.jpg")
         meta(name="Description", content="A collaborative tool for discovering images.")
 
@@ -23,7 +23,7 @@ html
     body
         header
             //- .container
-            h1 GanBreeder
+            h1 Ganbreeder
 
             h3 Which image is most interesting?
             br
@@ -32,6 +32,11 @@ html
             for key in keys
                 a.imglink(href='/i?k='+key)
                     img(src=root+key+'.jpeg')
+
+        .padding(style='height:40px;width:100%;')
+        .text_container
+            p Ganbreeder is a collaborative tool for discovering images. You may select any image to view its 'children' and can mix it with another. Image can be shared via URL. This is an experiment in using breeding + sharing as methods of exploring high complexity spaces. It is very similar to, and named after, #[a(href='http://picbreeder.org/') Picbreeder]. An earlier project #[a(href='http://www.joelsimon.net/facebook-graffiti.html') Facebook Graffiti] demonstrated to me the awesome creative capacity of crowds. Ganbreeder uses #[a(href='https://tfhub.dev/deepmind/biggan-128/2') these] BigGAN models and the #[a(href='https://github.com/joel-simon/ganbreeder') source code] is available. - #[a(href='www.joelsimon.net') Joel Simon]
+
 
         #footer
         script(src="index.js")

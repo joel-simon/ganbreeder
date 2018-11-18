@@ -7,6 +7,10 @@ header h1,h2,h3 {
     text-align: center;
 }
 
+.center {
+    text-align: center;
+}
+
 header h1 {
     margin-bottom: .0px;
 }
@@ -40,7 +44,6 @@ header h1 {
     max-width: 700px;
     height: 100%;
     text-align:center;
-
 }
 
 .image_container img {
@@ -60,6 +63,19 @@ header h1 {
     /*height: 120px;*/
     /*background-color: red;*/
     text-align:center;
+}
+
+.text_container {
+    color: gray;
+    font-size: 1.2em;
+    margin: 0 auto;
+    width: 80%;
+    max-width: 700px;
+    text-align: justify;
+}
+
+.text_container a {
+    color: gray;
 }
 
 .image {
