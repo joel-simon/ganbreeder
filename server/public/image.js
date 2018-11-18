@@ -13,3 +13,23 @@ post_json('/image_children', {key}).then(data => {
 }).catch(err => {
     console.log({ err })
 })
+
+const star = document.getElementById('star')
+const starimg = star.querySelector('img')
+
+star.onclick = (event) => {
+    event.stopPropagation()
+    if (localStorage.getItem(key)) return
+    localStorage.setItem(key, '1')
+    star.querySelector('img').src = '/image/star_full.png'
+    post('/star', {key}).then(() => {
+        console.log('Star success')
+    })
+}
+if (localStorage.getItem(key)) {
+
+    starimg.src = '/image/star_full.png'
+    // img.onload = () =>
+} else {
+    starimg.src='/image/star_empty.png'
+}

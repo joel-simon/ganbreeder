@@ -126,4 +126,19 @@ app.post('/mix_images', async (req, res) => {
     }
 })
 
+
+app.post('/star', async (req, res) => {
+    const key = req.body.key
+    if (!key) return res.sendStatus(400)
+    try {
+        const { stars, id } = await knex.select('stars', 'id').from('image').where({ key }).first()
+        console.log({stars, id})
+        await knex('image').update({stars: stars+1}).where({ id })
+        res.sendStatus(200)
+    } catch(err) {
+        console.log('Error: /star', err)
+        res.sendStatus(500)
+    }
+})
+
 app.listen(port, () => console.log('Server running on', port))
