@@ -25,6 +25,7 @@ if (query.has('parent1')) {
 for (let i = 0; i < textinput.length; i++) {
     oninput(i)
     textinput[i].oninput = () => oninput(i)
+    textinput[i].onpaste = () => oninput(i)
 }
 
 form.addEventListener('submit', event => {
