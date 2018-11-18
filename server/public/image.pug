@@ -27,28 +27,16 @@ html
             .container
                 h1 Ganbreeder
         section
-            //- #links
-                a(href='/random') Random
-                br
-                a(href='foo') Mix Images
-                //- br
-                //- a(href='foo') Image Info
-                //- br
-                //- a(href='foo') Code
             .container.top
                 #links
+                    .awrap
+                        a(href='/') Home
                     if pkey
                         .awrap
-                            a(href='/i?k='+pkey) parent
+                            a(href='/i?k='+pkey) Parent
                     .awrap
-                        a(href='/random') random
-                    .awrap
-                        a(href='/mix?parent1='+key) mix
+                        a(href='/mix?parent1='+key) Mix
 
-                    //- if pkey
-                    //-     a.imglink(href='/i?k='+pkey)
-                    //-         img(src=root+pkey+'.jpeg')
-                        //- p(style='position:relative;') Parent
 
                 img.image(src=root+key+'.jpeg')
                 //- .option.cross

@@ -11,7 +11,7 @@ const { performance } = require('perf_hooks')
 
 const IMAGE_STATE = {
     INITIAL: 0,
-    LOADING: 1
+    SELECTED: 1
 }
 
 app.use(express.static('public'))
@@ -31,29 +31,32 @@ app.get('/i', async (req, res) => {
     res.render('image.pug', { key, pkey })
 })
 
-app.get('/random', (req, res) => {
+app.get('/', (req, res) => {
     const q = 'select key from image where parent1 is null OR state = 1 order by random() limit 12'
     knex.raw(q).then(data => {
         const keys = data.rows.map(({key}) => key)
         res.render('random.pug', { keys })
     }).catch(err => {
-        console.log('Error: /random', { err })
+        console.log('Error: /', { err })
         return res.sendStatus(500)
     })
 })
 
-app.get('/', (req, res) => res.redirect('/random'))
+// app.get('/', (req, res) => res.redirect('/random'))
 
 app.get('/mix', (req, res) => res.render('mix'))
 
-app.post('/latest', async (req, res) => {
+app.get('/latest', async (req, res) => {
+    const page = req.query.page || 0
     try {
         const images = await knex.
-            select('key').
+            select('key', 'created_at').
             from('image').
-            where({ id }).
-            limit(32)
-        return res.json(images.map(({ key }) => key))
+            where({'state': IMAGE_STATE.SELECTED}).
+            orderBy('created_at', 'desc').
+            offset(48 * page).
+            limit(48)
+        res.render('latest.pug', { images, page })
     } catch(err) {
         console.log('Error: /latest', err)
         return res.sendStatus(500)

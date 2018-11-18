@@ -40,6 +40,7 @@ header h1 {
     /*position: relative;*/
     margin: 0 auto;
     margin-top: 20px;
+    margin-bottom: 20px;
     width: 80%;
     max-width: 700px;
     height: 100%;
