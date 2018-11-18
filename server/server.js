@@ -30,13 +30,41 @@ app.get('/i', async (req, res) => {
     res.render('image.pug', { key, pkey })
 })
 
+app.get('/random', (req, res) => {
+    const q = 'select key from image where parent1 is null order by random() limit 12'
+    knex.raw(q).then(data => {
+        const keys = data.rows.map(({key}) => key)
+        res.render('random.pug', { keys })
+    }).catch(err => {
+        console.log('Error: /random', { err })
+        return res.sendStatus(500)
+    })
+})
+
+app.get('/', (req, res) => res.redirect('/random'))
+
+app.get('/mix', (req, res) => res.render('mix'))
+
+app.post('/latest', async (req, res) => {
+    try {
+        const images = await knex.
+            select('key').
+            from('image').
+            where({ id }).
+            limit(32)
+        return res.json(images.map(({ key }) => key))
+    } catch(err) {
+        console.log('Error: /latest', err)
+        return res.sendStatus(500)
+    }
+})
+
 app.post('/image_children', async (req, res) => {
     const key = req.body.key
     if (!key) return res.sendStatus(404)
     try {
         const { id, state, vector, label } = await knex.from('image').where({ key }).first()
         if (state == IMAGE_STATE.INITIAL) {
-            console.time('make_children')
             const [ imgs, vectors, labels ] = await request({
                 url: secrets.ganurl+'/children',
                 method: 'POST',
@@ -46,11 +74,8 @@ app.post('/image_children', async (req, res) => {
                     vector: JSON.stringify(vector)
                 }
             })
-            console.timeEnd('make_children')
             await knex('image').where({ id }).update({ state: 1 })
-            console.time('save_results')
             const children = await save_results({ imgs, vectors, labels, parent1: id })
-            console.timeEnd('save_results')
             return res.json(children)
         } else if (state == 1) {
             const children = await knex.from('image').select('key').where({ parent1: id, parent2:null })
@@ -64,17 +89,6 @@ app.post('/image_children', async (req, res) => {
         console.log('Error: /image_children', err)
         return res.sendStatus(500)
     }
-})
-
-app.get('/random', (req, res) => {
-    const q = 'select key from image where parent1 is null order by random() limit 12'
-    knex.raw(q).then(data => {
-        const keys = data.rows.map(({key}) => key)
-        res.render('random.pug', { keys })
-    }).catch(err => {
-        console.log('Error: /random', { err })
-        return res.sendStatus(500)
-    })
 })
 
 app.post('/mix_images', async (req, res) => {
@@ -106,6 +120,4 @@ app.post('/mix_images', async (req, res) => {
     }
 })
 
-app.get('/', (req, res) => res.redirect('/random'))
-app.get('/mix', (req, res) => res.render('mix'))
 app.listen(port, () => console.log('Server running on', port))

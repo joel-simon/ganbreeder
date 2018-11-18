@@ -12,7 +12,6 @@ exports.up = async function(knex, Promise) {
             t.foreign('parent1').references('id').inTable('image')
             t.integer('parent2')
             t.foreign('parent2').references('id').inTable('image')
-            t.timestamps(false, true)
         })
 };
 
