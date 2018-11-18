@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title Gan Breeder
+        title GanBreeder
         meta(charset="utf-8")
         meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
         meta(name="Description", content="Generate images by exploring latent space.")
@@ -31,7 +31,7 @@ html
     body
         - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
         header
-            h1 Gan-Breeder
+            h1 GanBreeder
             h3 Paste in two ganbreeder links to mix
             br
 
@@ -47,7 +47,7 @@ html
             img.parent
 
         .image_container#loading_container(style='display:none')
-            img.loading(src="loading.gif", style='width:50%;')
+            img.loading(src="image/loading.gif", style='width:50%;')
             p Loading Children
 
         .image_container.content(style='display:none')

@@ -7,6 +7,7 @@ const port = process.argv[2] || 8888
 const app = express()
 const secrets= require('./secrets.js')
 const knex = require('knex')(secrets.database)
+const { performance } = require('perf_hooks')
 
 const IMAGE_STATE = {
     INITIAL: 0,
@@ -31,7 +32,7 @@ app.get('/i', async (req, res) => {
 })
 
 app.get('/random', (req, res) => {
-    const q = 'select key from image where parent1 is null order by random() limit 12'
+    const q = 'select key from image where parent1 is null OR state = 1 order by random() limit 12'
     knex.raw(q).then(data => {
         const keys = data.rows.map(({key}) => key)
         res.render('random.pug', { keys })
@@ -65,6 +66,7 @@ app.post('/image_children', async (req, res) => {
     try {
         const { id, state, vector, label } = await knex.from('image').where({ key }).first()
         if (state == IMAGE_STATE.INITIAL) {
+            const t = performance.now()
             const [ imgs, vectors, labels ] = await request({
                 url: secrets.ganurl+'/children',
                 method: 'POST',
@@ -74,6 +76,7 @@ app.post('/image_children', async (req, res) => {
                     vector: JSON.stringify(vector)
                 }
             })
+            console.log(`Made children in: ${performance.now() - t}`)
             await knex('image').where({ id }).update({ state: 1 })
             const children = await save_results({ imgs, vectors, labels, parent1: id })
             return res.json(children)
