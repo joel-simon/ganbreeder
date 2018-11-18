@@ -102,4 +102,17 @@ header h1 {
         max-width: inherit;
         width: 100%;
     }
+
+    header h1 {
+        font-size: 1em;
+    }
+
+    .image_container img {
+        /* Switch to 3-cols and 4 rows */
+        width: 30%;
+    }
+
+    img.image {
+        width: 25%;
+    }
 }
