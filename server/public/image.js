@@ -26,10 +26,9 @@ star.onclick = (event) => {
         console.log('Star success')
     })
 }
-if (localStorage.getItem(key)) {
 
+if (localStorage.getItem(key)) {
     starimg.src = '/image/star_full.png'
-    // img.onload = () =>
 } else {
     starimg.src='/image/star_empty.png'
 }

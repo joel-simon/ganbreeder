@@ -1,0 +1,19 @@
+doctype html
+html
+    head
+        title Ganbreeder
+        meta(charset="utf-8")
+        meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
+        link(href="index.css" rel="stylesheet")
+    body
+        - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
+        header
+            h1 Ganbreeder
+            .text_container(style='text-align:center;')
+                a.center(href='/', style='') Home
+            h3 Your Starred Images
+        .image_container.content
+        #footer
+        script.
+            const root = "#{root}"
+        script(src='/starred.js')

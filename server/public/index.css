@@ -21,14 +21,23 @@ header h1 {
     /*position: fixed;*/
     /*top: 0px;*/
     /*right: 0px;*/
-    margin: 20px;
+    /*margin-lft: 20px;*/
     /*margin-top: 25px;*/
 }
 
 .awrap {
-    width: 80px;
+    /*width: 80px;*/
+    margin-top: 10px;
+    margin-right: 20px;
+    margin-bottom: 20px;
     display: inline-block;
 }
+
+.awrap#star {
+    position: relative;
+    top: 4px;
+}
+
 #links a {
     /*float: left;*/
     /*width: 50px;*/
@@ -135,5 +144,9 @@ header h1 {
 
     img.image {
         width: 25%;
+    }
+
+    .awrap {
+        margin-right: 10px;
     }
 }

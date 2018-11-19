@@ -32,7 +32,7 @@ app.get('/i', async (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    const q = 'select key from image where parent1 is null OR state = 1 order by random() limit 12'
+    const q = 'select key from image where parent1 is null OR stars > 0 order by random() limit 12'
     knex.raw(q).then(data => {
         const keys = data.rows.map(({key}) => key)
         res.render('random.pug', { keys })
@@ -44,6 +44,7 @@ app.get('/', (req, res) => {
 
 // app.get('/', (req, res) => res.redirect('/random'))
 
+app.get('/starred', (req, res) => res.render('starred'))
 app.get('/mix', (req, res) => res.render('mix'))
 
 app.get('/latest', async (req, res) => {
@@ -126,13 +127,11 @@ app.post('/mix_images', async (req, res) => {
     }
 })
 
-
 app.post('/star', async (req, res) => {
     const key = req.body.key
     if (!key) return res.sendStatus(400)
     try {
         const { stars, id } = await knex.select('stars', 'id').from('image').where({ key }).first()
-        console.log({stars, id})
         await knex('image').update({stars: stars+1}).where({ id })
         res.sendStatus(200)
     } catch(err) {
