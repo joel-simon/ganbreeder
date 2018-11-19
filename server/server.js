@@ -31,15 +31,20 @@ app.get('/i', async (req, res) => {
     res.render('image.pug', { key, pkey })
 })
 
-app.get('/', (req, res) => {
-    const q = 'select key from image where parent1 is null OR stars > 0 order by random() limit 12'
-    knex.raw(q).then(data => {
-        const keys = data.rows.map(({key}) => key)
+app.get('/', async (req, res) => {
+    try {
+        /* PSQL random isnt perfect. Manually ensure a mix of evovled and raw images.
+        */
+        const q1 = 'select key from image where parent1 is null order by random() limit 7'
+        const q2 = 'select key from image where stars>0 order by random() limit 5'
+        const d1 = (await knex.raw(q1)).rows
+        const d2 = (await knex.raw(q2)).rows
+        const keys = d1.concat(d2).map(({ key}) => key)
         res.render('random.pug', { keys })
-    }).catch(err => {
+    } catch(err) {
         console.log('Error: /', { err })
         return res.sendStatus(500)
-    })
+    }
 })
 
 // app.get('/', (req, res) => res.redirect('/random'))
