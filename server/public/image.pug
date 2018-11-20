@@ -66,9 +66,13 @@ html
                     a.imglink()
                         img()
                 - }
+            .text_container.center(style='text-align:center;font-size:1.0em;')
+                a(href='/info?k='+pkey) Img Info
+
         #footer
         script.
-            const key = "#{key}"
-            const root = "#{root}"
+            const key = "#{key}";
+            const root = "#{root}";
+
         script(src="utils.js")
         script(src="image.js")

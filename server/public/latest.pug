@@ -1,3 +1,4 @@
+
 include partials/google_analytics.pug
 doctype html
 html
@@ -23,10 +24,11 @@ html
     body
         header
             h1 Ganbreeder
-            h3 Recently selected images
+
             .text_container(style='text-align:center;')
                 a.center(href='/', style='') Home
-            br
+            h3 Recently selected images
+
         .image_container.content
             - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
             for image in images

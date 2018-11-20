@@ -127,6 +127,7 @@ header h1 {
     .image_container {
         max-width: inherit;
         width: 100%;
+        margin-top: 0px;
     }
     .text_container {
         max-width: inherit;

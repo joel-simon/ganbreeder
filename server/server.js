@@ -28,7 +28,14 @@ app.get('/i', async (req, res) => {
         let res = await knex.select('key').from('image').where({ id: parent1 }).first()
         pkey = res.key
     }
-    res.render('image.pug', { key, pkey })
+    res.render('image.pug', { key, pkey, vector, label })
+})
+
+app.get('/info', async (req, res) => {
+    const key = req.query.k
+    if (!key) return res.sendStatus(404)
+    const { vector, label } = await knex.from('image').where({ key }).first()
+    res.json({ vector, label })
 })
 
 app.get('/', async (req, res) => {
@@ -39,8 +46,13 @@ app.get('/', async (req, res) => {
         const q2 = 'select key from image where stars>0 order by random() limit 5'
         const d1 = (await knex.raw(q1)).rows
         const d2 = (await knex.raw(q2)).rows
-        const keys = d1.concat(d2).map(({ key}) => key)
-        res.render('random.pug', { keys })
+        const keys = d1.concat(d2).map(({ key }) => key)
+
+        // Show off some numbers.
+        let count = await knex('image').count('*').where({'state': 1})
+            // whereRaw("created_at > current_timestamp - interval '2 day'")
+        count = count[0].count
+        res.render('random.pug', { keys, count })
     } catch(err) {
         console.log('Error: /', { err })
         return res.sendStatus(500)
@@ -62,7 +74,8 @@ app.get('/latest', async (req, res) => {
             orderBy('created_at', 'desc').
             offset(48 * page).
             limit(48)
-        res.render('latest.pug', { images, page })
+
+        res.render('latest.pug', { images, page, count })
     } catch(err) {
         console.log('Error: /latest', err)
         return res.sendStatus(500)
