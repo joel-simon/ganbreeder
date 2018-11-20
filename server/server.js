@@ -75,7 +75,7 @@ app.get('/latest', async (req, res) => {
             offset(48 * page).
             limit(48)
 
-        res.render('latest.pug', { images, page, count })
+        res.render('latest.pug', { images, page })
     } catch(err) {
         console.log('Error: /latest', err)
         return res.sendStatus(500)
