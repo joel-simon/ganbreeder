@@ -26,7 +26,6 @@ html
 
         style.
             #star {
-
             }
             #star img {
                 height: 25px;
@@ -45,7 +44,8 @@ html
                         a(href='/') Home
                     if pkey
                         .awrap
-                            a(href='/i?k='+pkey) Parent
+                            a(href='/lineage?k='+key) Lineage
+                            //- a(href='/i?k='+pkey) Parent
                     .awrap
                         a(href='/mix?parent1='+key) Mix
                     .awrap#star
@@ -54,8 +54,6 @@ html
                         a(href='/starred') Starred
 
                 img.image(src=root+key+'.jpeg')
-                //- .option.cross
-                    //- p(style='position:relative;top:84px;') Cross
 
             .image_container#loading_container
                 img.loading(src="image/loading.gif", style='width:50%;')
