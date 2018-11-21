@@ -31,6 +31,11 @@ dim_z = input_z.shape.as_list()[1]
 vocab_size = input_y.shape.as_list()[1]
 
 initializer = tf.global_variables_initializer()
+
+config = tf.ConfigProto()
+config = tf.ConfigProto(intra_op_parallelism_threads=0, inter_op_parallelism_threads=0, \
+                        allow_soft_placement=True, device_count = {'CPU': 12})
+
 sess = tf.Session()
 sess.run(initializer)
 
@@ -60,8 +65,8 @@ def sample(vectors, labels, batch_size=10):
     return ims
 
 def create_variations(num, vector, label):
-    new_vectors = np.zeros((num, *vector.shape))
-    new_labels  = np.zeros((num, *label.shape))
+    new_vectors = np.zeros((num, vector.shape[0]))
+    new_labels  = np.zeros((num, label.shape[0]))
 
     vector_mutation_rate = vector.std() * 4
 
@@ -71,7 +76,15 @@ def create_variations(num, vector, label):
         new_vectors[i] = vector + dv
         new_vectors[i] /= max(-new_vectors.min(), new_vectors.max())
 
-        if random.random() < 0.5:
+        # Remove class
+        if random.random() < 0.2:
+            opts = np.nonzero(new_labels[i])[0]
+            if len(opts) == 1:
+                continue
+            new_labels[i][random.choice(opts)] = 0.0
+
+        # Add class.
+        if random.random() < 0.3:
             new_labels[i][random.randint(0, label.shape[0]-1)] = 1.0
 
     return new_vectors, new_labels
@@ -92,7 +105,6 @@ def encode_img(arr, format='png'):
     img_str = 'data:image/jpeg;base64,'+img_bytes.decode('ascii')
     return img_str
 
-
 app = Flask(__name__, static_url_path='') #, static_folder='public', )
 CORS(app)
 
@@ -106,7 +118,7 @@ def get_random():
         num = int(request.form['num'])
         print('Random', num)
         t = time.time()
-        imgs, vectors, labels = create_random_images(num, max_classes=10)
+        imgs, vectors, labels = create_random_images(num, max_classes=3)
         print('Finished in', time.time()-t)
         response = jsonify([
             [ encode_img(arr) for arr in imgs ],
