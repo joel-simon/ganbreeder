@@ -47,10 +47,8 @@ app.get('/', async (req, res) => {
         const d1 = (await knex.raw(q1)).rows
         const d2 = (await knex.raw(q2)).rows
         const keys = d1.concat(d2).map(({ key }) => key)
-
         // Show off some numbers.
         let count = await knex('image').count('*').where({'state': 1})
-            // whereRaw("created_at > current_timestamp - interval '2 day'")
         count = count[0].count
         res.render('random.pug', { keys, count })
     } catch(err) {
@@ -59,7 +57,6 @@ app.get('/', async (req, res) => {
     }
 })
 
-// app.get('/', (req, res) => res.redirect('/random'))
 
 app.get('/starred', (req, res) => res.render('starred'))
 app.get('/mix', (req, res) => res.render('mix'))
@@ -79,6 +76,28 @@ app.get('/latest', async (req, res) => {
         res.render('latest.pug', { images, page })
     } catch(err) {
         console.log('Error: /latest', err)
+        return res.sendStatus(500)
+    }
+})
+
+app.get('/lineage', async (req, res) => {
+    const key = req.query.k
+    if (!key) return res.sendStatus(404)
+    try {
+        const q = `WITH RECURSIVE parenttree AS (
+            SELECT id, key, created_at, parent1
+            FROM image
+            WHERE image.key = '${key}'
+            UNION ALL
+            SELECT e.id, e.key, e.created_at, e.parent1
+            FROM image e
+            INNER JOIN parenttree ptree ON ptree.parent1 = e.id
+        )
+        SELECT key, created_at FROM parenttree order by created_at desc`
+        const parents = (await knex.raw(q)).rows
+        return res.render('lineage.pug', { key, parents })
+    } catch(err) {
+        console.log('Error: /lineage', err)
         return res.sendStatus(500)
     }
 })
