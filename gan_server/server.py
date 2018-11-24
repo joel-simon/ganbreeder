@@ -47,8 +47,9 @@ def create_labels(num, max_classes):
     label = np.zeros((num, vocab_size))
     for i in range(len(label)):
         for _ in range(random.randint(1, max_classes)):
-            j = random.randint(0,vocab_size-1)
+            j = random.randint(0, vocab_size-1)
             label[i, j] = random.random()
+        new_labels[i] /= new_labels[i].sum()
     return label
 
 def sample(vectors, labels, batch_size=10):
@@ -84,8 +85,11 @@ def create_variations(num, vector, label):
             new_labels[i][random.choice(opts)] = 0.0
 
         # Add class.
-        if random.random() < 0.3:
-            new_labels[i][random.randint(0, label.shape[0]-1)] = 1.0
+        elif random.random() < 0.3:
+            new_labels[i][random.randint(0, label.shape[0]-1)] += random.random()
+
+        # Normalize.
+        new_labels[i] /= new_labels[i].sum()
 
     return new_vectors, new_labels
 

@@ -8,11 +8,11 @@ const s3 = new AWS.S3()
 
 const randomString = (n) => crypto.randomBytes(n).toString('hex')
 
-module.exports = async function({ imgs, vectors, labels, parent1=null, parent2=null}) {
+module.exports = async function({ imgs, vectors, labels, size, parent1=null, parent2=null}) {
     const insert = []
     for (var i = 0; i < imgs.length; i++) {
         insert.push({
-            parent1, parent2,
+            parent1, parent2, size,
             key: randomString(12),
             label: labels[i],
             vector: vectors[i],

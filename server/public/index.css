@@ -11,6 +11,10 @@ header h1,h2,h3 {
     text-align: center;
 }
 
+img.image {
+    max-width: 256px;
+}
+
 header h1 {
     margin-bottom: .0px;
 }

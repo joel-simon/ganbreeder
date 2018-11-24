@@ -14,6 +14,21 @@ const IMAGE_STATE = {
     SELECTED: 1
 }
 
+/**
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+    let j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+
 app.use(express.static('public'))
 app.use(bodyParser.json())
 app.set('view engine', 'pug')
@@ -42,11 +57,12 @@ app.get('/', async (req, res) => {
     try {
         /* PSQL random isnt perfect. Manually ensure a mix of evovled and raw images.
         */
-        const q1 = 'select key from image where parent1 is null order by random() limit 7'
-        const q2 = 'select key from image where stars>0 order by random() limit 5'
+        const q1 = 'select key from image where parent1 is null and size=256 order by random() limit 7'
+        const q2 = 'select key from image where stars>0 and size=256 order by random() limit 5'
         const d1 = (await knex.raw(q1)).rows
         const d2 = (await knex.raw(q2)).rows
         const keys = d1.concat(d2).map(({ key }) => key)
+        shuffle(keys)
         // Show off some numbers.
         let count = await knex('image').count('*').where({'state': 1})
         count = count[0].count
@@ -106,11 +122,14 @@ app.post('/image_children', async (req, res) => {
     const key = req.body.key
     if (!key) return res.sendStatus(404)
     try {
-        const { id, state, vector, label } = await knex.from('image').where({ key }).first()
+        const q = knex.from('image').where({ key }).first()
+        const { id, state, vector, label, size } = await q
+
         if (state == IMAGE_STATE.INITIAL) {
             const t = performance.now()
+            const url = (size == 128) ? secrets.ganurl128 : secrets.ganurl256
             const [ imgs, vectors, labels ] = await request({
-                url: secrets.ganurl+'/children',
+                url: url+'/children',
                 method: 'POST',
                 json: true,
                 form: {
@@ -120,7 +139,7 @@ app.post('/image_children', async (req, res) => {
             })
             console.log(`Made children in: ${performance.now() - t}`)
             await knex('image').where({ id }).update({ state: 1 })
-            const children = await save_results({ imgs, vectors, labels, parent1: id })
+            const children = await save_results({ imgs, vectors, labels, size, parent1: id })
             return res.json(children)
         } else if (state == 1) {
             const children = await knex.from('image').select('key').where({ parent1: id, parent2:null })
@@ -144,8 +163,12 @@ app.post('/mix_images', async (req, res) => {
         const image1 = await knex.from('image').where({ key:key1 }).first()
         const image2 = await knex.from('image').where({ key:key2 }).first()
 
+        if (image1.size != image2.size) {
+            return res.status(400).send('Cannot mix images of differnet sizes.')
+        }
+        const url = (image1.size == 128) ? secrets.ganurl128 : secrets.ganurl256
         const [ imgs, vectors, labels ] = await request({
-            url: secrets.ganurl+'/mix_images',
+            url: url+'/mix_images',
             method: 'POST',
             json: true,
             form: {
@@ -156,6 +179,7 @@ app.post('/mix_images', async (req, res) => {
             }
         })
         const children = await save_results({ imgs, vectors, labels,
+                                              size: image1.size,
                                               parent1: image1.id,
                                               parent2: image2.id })
         return res.json(children)
