@@ -19,6 +19,11 @@ header h1 {
     margin-bottom: .0px;
 }
 
+#footer {
+    width: 100%;
+    height: 50px;
+}
+
 /*a.title */
 a.title {
     color: black;
@@ -141,7 +146,8 @@ a.title h1 {
 
 @media only screen and (max-width: 700px) {
     body {
-        margin: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
     }
     .image_container {
         max-width: inherit;
