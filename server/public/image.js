@@ -19,8 +19,12 @@ const starimg = star.querySelector('img')
 
 star.onclick = (event) => {
     event.stopPropagation()
-    if (localStorage.getItem(key)) return
-    localStorage.setItem(key, '1')
+    if (localStorage.getItem(key)) {
+        starimg.src = '/image/star_empty.png'
+        localStorage.removeItem(key)
+        return
+    }
+    localStorage.setItem(key, new Date().getTime())
     star.querySelector('img').src = '/image/star_full.png'
     post('/star', {key}).then(() => {
         console.log('Star success')
@@ -30,5 +34,5 @@ star.onclick = (event) => {
 if (localStorage.getItem(key)) {
     starimg.src = '/image/star_full.png'
 } else {
-    starimg.src='/image/star_empty.png'
+    starimg.src = '/image/star_empty.png'
 }

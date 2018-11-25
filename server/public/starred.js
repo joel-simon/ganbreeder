@@ -1,7 +1,12 @@
 const image_container = document.getElementsByClassName('image_container')[0]
 
-for (const key of Object.keys(localStorage)) {
-    image_container.append()
+/* [key, date] pairs. */
+const starred = Object.entries(localStorage)
+
+/* Sort entires by date starred.*/
+starred.sort((a, b) => b[1]-a[1])
+
+for (const [key, time] of starred) {
     const a = document.createElement('a')
     a.href = '/i?k='+key
 
