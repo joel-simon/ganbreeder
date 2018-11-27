@@ -27,7 +27,7 @@ function updatecache() {
     ]).then(([ q1, q2, count ]) => {
         memcache['raw'] = q1.rows.map(({ key }) => key)
         memcache['starred'] = q2.rows.map(({ key }) => key)
-        memcache['count'] = count.rows[0].count
+        memcache['count'] = parseInt(count.rows[0].count)
         console.log(memcache['raw'].length)
         console.log(memcache['starred'].length)
         shuffle(memcache['raw'])
