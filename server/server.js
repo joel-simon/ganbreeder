@@ -14,6 +14,37 @@ const IMAGE_STATE = {
     SELECTED: 1
 }
 
+const memcache = {
+}
+let lastupdate = null
+
+function updatecache() {
+    console.time('updatecache')
+    return Promise.all([
+        knex.raw('select key from image where parent1 is null and size=256'),
+        knex.raw('select key from image where stars>0 and size=256'),
+        knex.raw('select count(*) from image where state=1')
+    ]).then(([ q1, q2, count ]) => {
+        memcache['raw'] = q1.rows.map(({ key }) => key)
+        memcache['starred'] = q2.rows.map(({ key }) => key)
+        memcache['count'] = count.rows[0].count
+        console.log(memcache['raw'].length)
+        console.log(memcache['starred'].length)
+        shuffle(memcache['raw'])
+        shuffle(memcache['starred'])
+        lastupdate = new Date().getTime()
+        console.timeEnd('updatecache')
+    })
+}
+
+async function check_cache_update() {
+    const t = new Date().getTime()
+    const period = 60 * 60 * 1000 // 1 hour.
+    if (t - lastupdate > period) {
+        await updatecache()
+    }
+}
+
 /**
  * Shuffles array in place.
  * @param {Array} a items An array containing the items.
@@ -28,6 +59,12 @@ function shuffle(a) {
     }
     return a;
 }
+
+function random_slice(arr, n) {
+    const i = Math.floor(Math.random()*arr.length - n)
+    return arr.slice(i, i+n)
+}
+
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
@@ -55,24 +92,19 @@ app.get('/info', async (req, res) => {
 
 app.get('/', async (req, res) => {
     try {
-        /* PSQL random isnt perfect. Manually ensure a mix of evovled and raw images.
+        /* Provide a mix of starred and raw images.
         */
-        const q1 = 'select key from image where parent1 is null and size=256 order by random() limit 7'
-        const q2 = 'select key from image where stars>0 and size=256 order by random() limit 5'
-        const d1 = (await knex.raw(q1)).rows
-        const d2 = (await knex.raw(q2)).rows
-        const keys = d1.concat(d2).map(({ key }) => key)
-        shuffle(keys)
-        // Show off some numbers.
-        let count = await knex('image').count('*').where({'state': 1})
-        count = count[0].count
+        const keys_1 = random_slice(memcache['raw'], 6)
+        const keys_2 = random_slice(memcache['starred'], 6)
+        const keys = keys_1.concat(keys_2)
+        const count = memcache['count']
         res.render('random.pug', { keys, count })
+        await check_cache_update()
     } catch(err) {
         console.log('Error: /', { err })
         return res.sendStatus(500)
     }
 })
-
 
 app.get('/starred', (req, res) => res.render('starred'))
 app.get('/mix', (req, res) => res.render('mix'))
@@ -140,6 +172,7 @@ app.post('/image_children', async (req, res) => {
             console.log(`Made children in: ${performance.now() - t}`)
             await knex('image').where({ id }).update({ state: 1 })
             const children = await save_results({ imgs, vectors, labels, size, parent1: id })
+            memcache['count'] += 1
             return res.json(children)
         } else if (state == 1) {
             const children = await knex.from('image').select('key').where({ parent1: id, parent2:null })
@@ -202,4 +235,6 @@ app.post('/star', async (req, res) => {
     }
 })
 
-app.listen(port, () => console.log('Server running on', port))
+updatecache().then(() => {
+    app.listen(port, () => console.log('Server running on', port))
+}).catch(err => console.log(err))
