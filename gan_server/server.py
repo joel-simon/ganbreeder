@@ -1,3 +1,4 @@
+import sys
 import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
@@ -156,4 +157,6 @@ def children():
         return '', 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 5000
+    print('port=', port)
+    app.run(host='0.0.0.0', debug=True, port=port)
