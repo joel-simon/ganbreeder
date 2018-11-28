@@ -115,9 +115,8 @@ app.get('/latest', async (req, res) => {
         const images = await knex.
             select('key', 'created_at').
             from('image').
-            // where({'state': IMAGE_STATE.SELECTED}).
             where('stars', '>', 0).
-            orderBy('created_at', 'desc').
+            orderBy('id', 'desc').
             offset(48 * page).
             limit(48)
 
