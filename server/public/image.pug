@@ -31,6 +31,14 @@ html
                 height: 25px;
                 cursor: pointer;
             }
+            .text_container.class_labels {
+                max-width: 800px;
+                text-align: left;
+            }
+            .text_container.class_labels p {
+                display: inline;
+                margin-right: 15px;
+            }
     body
 
         header
@@ -40,12 +48,9 @@ html
         section
             .container.top
                 #links
-                    //- .awrap
-                        a(href='/') Home
                     if pkey
                         .awrap
                             a(href='/lineage?k='+key) Lineage
-                            //- a(href='/i?k='+pkey) Parent
                     .awrap
                         a(href='/mix?parent1='+key) Mix
                     .awrap#star
@@ -64,9 +69,14 @@ html
                     a.imglink()
                         img()
                 - }
+            .text_container.class_labels
+                - for (i = 0; i < 1000; i ++) {
+                    - if (label[i] > 0.01)
+                        p!=label_names[i]+": "+(label[i]*100).toFixed(2)+'%'
+                - }
             .text_container.center(style='text-align:center;font-size:1.0em;')
-                a(href='/info?k='+key) Image Info
                 p Share this image via its URL
+                a(href='/info?k='+key) Image Data
 
         #footer
         script.

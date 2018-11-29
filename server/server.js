@@ -8,6 +8,7 @@ const app = express()
 const secrets= require('./secrets.js')
 const knex = require('knex')(secrets.database)
 const { performance } = require('perf_hooks')
+const label_names = require('./label_names.js')
 
 const IMAGE_STATE = {
     INITIAL: 0,
@@ -80,7 +81,7 @@ app.get('/i', async (req, res) => {
         let res = await knex.select('key').from('image').where({ id: parent1 }).first()
         pkey = res.key
     }
-    res.render('image.pug', { key, pkey, vector, label })
+    res.render('image.pug', { key, pkey, vector, label, label_names })
 })
 
 app.get('/info', async (req, res) => {
