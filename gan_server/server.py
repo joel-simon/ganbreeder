@@ -12,8 +12,7 @@ import base64
 from io import BytesIO
 import PIL.Image
 
-module_path = '/tmp/tfhub_modules/69c940d5e79ede1c89f384d21607f04875f24507'
-# module_path = '/Users/joelsimon/Projects/gan/modules/128'
+module_path = 'https://tfhub.dev/deepmind/biggan-256/2'
 rand_seed = 123
 truncation = 0.5
 
