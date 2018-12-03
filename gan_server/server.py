@@ -33,8 +33,8 @@ vocab_size = input_y.shape.as_list()[1]
 initializer = tf.global_variables_initializer()
 
 config = tf.ConfigProto()
-config = tf.ConfigProto(intra_op_parallelism_threads=0, inter_op_parallelism_threads=0, \
-                        allow_soft_placement=True, device_count = {'CPU': 12})
+config = tf.ConfigProto(intra_op_parallelism_threads=0, inter_op_parallelism_threads=0)
+                        # allow_soft_placement=True, device_count = {'CPU': 12})
 
 sess = tf.Session()
 sess.run(initializer)
@@ -49,7 +49,7 @@ def create_labels(num, max_classes):
         for _ in range(random.randint(1, max_classes)):
             j = random.randint(0, vocab_size-1)
             label[i, j] = random.random()
-        new_labels[i] /= new_labels[i].sum()
+        label[i] /= label[i].sum()
     return label
 
 def sample(vectors, labels, batch_size=10):
