@@ -93,6 +93,17 @@ def create_variations(num, vector, label):
 
     return new_vectors, new_labels
 
+def interpolate(num, vector1, vector2, label1, label2):
+    x = np.linspace(0, 1, num+2)
+    new_vectors = np.zeros((num, vector1.shape[0]))
+    new_labels  = np.zeros((num, label1.shape[0]))
+
+    for i, v in enumerate(x[1: -1]):
+        new_labels[i]  = v*label1 + (1-v) * label2
+        new_vectors[i] = v*vector1 + (1-v) * vector2
+
+    return new_vectors, new_labels
+
 def create_random_images(num_images, max_classes):
     vectors = truncated_z_sample(num_images)
     labels = create_labels(num_images, max_classes)

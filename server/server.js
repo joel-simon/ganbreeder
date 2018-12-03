@@ -10,62 +10,17 @@ const knex = require('knex')(secrets.database)
 const { performance } = require('perf_hooks')
 const label_names = require('./label_names.js')
 
+const memcache = require('./cache.json')
+
 const IMAGE_STATE = {
     INITIAL: 0,
     SELECTED: 1
-}
-
-const memcache = {
-}
-let lastupdate = null
-
-function updatecache() {
-    console.time('updatecache')
-    return Promise.all([
-        knex.raw('select key from image where parent1 is null and size=256'),
-        knex.raw('select key from image where stars>0 and size=256'),
-        knex.raw('select count(*) from image where state=1')
-    ]).then(([ q1, q2, count ]) => {
-        memcache['raw'] = q1.rows.map(({ key }) => key)
-        memcache['starred'] = q2.rows.map(({ key }) => key)
-        memcache['count'] = parseInt(count.rows[0].count)
-        console.log(memcache['raw'].length)
-        console.log(memcache['starred'].length)
-        shuffle(memcache['raw'])
-        shuffle(memcache['starred'])
-        lastupdate = new Date().getTime()
-        console.timeEnd('updatecache')
-    })
-}
-
-async function check_cache_update() {
-    const t = new Date().getTime()
-    const period = 60 * 60 * 1000 // 1 hour.
-    if (t - lastupdate > period) {
-        await updatecache()
-    }
-}
-
-/**
- * Shuffles array in place.
- * @param {Array} a items An array containing the items.
- */
-function shuffle(a) {
-    let j, x, i;
-    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
-    }
-    return a;
 }
 
 function random_slice(arr, n) {
     const i = Math.floor(Math.random()*arr.length - n)
     return arr.slice(i, i+n)
 }
-
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
@@ -100,7 +55,6 @@ app.get('/', async (req, res) => {
         const keys = keys_1.concat(keys_2)
         const count = memcache['count']
         res.render('random.pug', { keys, count })
-        await check_cache_update()
     } catch(err) {
         console.log('Error: /', { err })
         return res.sendStatus(500)
@@ -235,6 +189,4 @@ app.post('/star', async (req, res) => {
     }
 })
 
-updatecache().then(() => {
-    app.listen(port, () => console.log('Server running on', port))
-}).catch(err => console.log(err))
+app.listen(port, () => console.log('Server running on', port))
