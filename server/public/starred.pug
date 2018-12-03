@@ -1,4 +1,5 @@
 include partials/google_analytics.pug
+include partials/mailchimp.pug
 doctype html
 html
     head
@@ -22,7 +23,12 @@ html
             .text_container(style='text-align:center;')
                 a.center(href='/', style='') Home
             h3 Your Starred Images
+
+
+
         .image_container.content
+        .text_container
+            +mailchimp-mixin()
         #footer
         script.
             const root = "#{root}"

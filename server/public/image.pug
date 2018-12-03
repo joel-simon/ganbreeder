@@ -1,4 +1,6 @@
 include partials/google_analytics.pug
+include partials/mailchimp.pug
+
 - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
 doctype html
 html
@@ -79,6 +81,7 @@ html
             .text_container.center(style='text-align:center;font-size:1.0em;')
                 p Share this image via its URL
                 a(href='/info?k='+key) Image Data
+
 
         #footer
         script.
