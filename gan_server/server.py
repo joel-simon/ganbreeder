@@ -155,6 +155,24 @@ def children():
         print(e)
         return '', 500
 
+@app.route('/mix_images', methods=['POST'])
+def mix_images():
+    try:
+        label1 = np.asarray(json.loads(request.form['label1']), dtype='float64')
+        label2 = np.asarray(json.loads(request.form['label2']), dtype='float64')
+        vector1 = np.asarray(json.loads(request.form['vector1']), dtype='float64')
+        vector2 = np.asarray(json.loads(request.form['vector2']), dtype='float64')
+        new_vectors, new_labels = interpolate(12, vector1, vector2, label1, label2)
+        new_ims = sample(new_vectors, new_labels)
+        return jsonify([
+            [ encode_img(arr) for arr in new_ims ],
+            new_vectors.tolist(),
+            new_labels.tolist()
+        ])
+    except Exception as e:
+        print(e)
+        return '', 500
+
 if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 5000
     print('port=', port)
