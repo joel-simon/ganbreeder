@@ -1,6 +1,6 @@
 // Update with your config settings.
 module.exports = {
-    ganurl: "",
+    ganurl256: "http://localhost:5000",
     database: {
         client: 'postgresql',
         connection: {
