@@ -5,3 +5,44 @@
 This code was made in a weekend and hasn't been cleaned up or documented yet. There are also improvements to make to scalability.
 
 Pull request are more than welcome :)
+
+## How to use
+
+### Prerequisites
+* Install Python 3 + pip (for the GAN server)
+* Install NodeJS + npm (for the frontend)
+* Install a PostgreSQL server
+
+### Launch the GAN server
+```bash
+cd gan_server
+# Install dependencies
+pip install -r requirements.txt
+# And go...
+python server.py
+```
+Your GAN server is available at http://localhost:5000/
+
+### Configure the frontend
+For quick hacking, if you have Docker at your disposal, you can spawn a PostgreSQL database like so:
+```bash
+docker run -p 5432:5432 --name ganbreederpostgres -e POSTGRES_PASSWORD=ganbreederpostgres -d postgres
+```
+With that simple scenario, the database and user would be `postgres` and the password would be `ganbreederpostgres`
+
+Copy the file `server/example_secrets.js` to `secrets.js` and modify it to fit your environment.
+
+### Launch the frontend
+```bash
+cd server
+npm install
+# Create the database structure
+node_modules/knex/bin/cli.js migrate:latest
+# Generate the first images
+node make_randoms.js
+# Generate a cache of image keys for the front page (do it every time you want to update the front page)
+node updatecache.js
+# And go...
+node server.js
+```
+Your frontend is available at http://localhost:8888/
