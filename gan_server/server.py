@@ -32,10 +32,6 @@ vocab_size = input_y.shape.as_list()[1]
 
 initializer = tf.global_variables_initializer()
 
-config = tf.ConfigProto()
-config = tf.ConfigProto(intra_op_parallelism_threads=0, inter_op_parallelism_threads=0)
-                        # allow_soft_placement=True, device_count = {'CPU': 12})
-
 sess = tf.Session()
 sess.run(initializer)
 
@@ -77,16 +73,19 @@ def create_variations(num, vector, label):
         new_vectors[i] = vector + dv
         new_vectors[i] /= max(-new_vectors.min(), new_vectors.max())
 
-        # Remove class
+        # Reduce class
         if random.random() < 0.2:
             opts = np.nonzero(new_labels[i])[0]
             if len(opts) == 1:
                 continue
-            new_labels[i][random.choice(opts)] = 0.0
+            new_labels[i][random.choice(opts)] *= 0.2 + random.random() * 0.6
 
         # Add class.
-        elif random.random() < 0.3:
-            new_labels[i][random.randint(0, label.shape[0]-1)] += random.random()
+        if random.random() < 0.3:
+            new_labels[i][random.randint(0, label.shape[0]-1)] += random.random() * 0.5
+
+        # Remove if less than two percent.
+        new_labels[new_labels < .02] = 0
 
         # Normalize.
         new_labels[i] /= new_labels[i].sum()
@@ -111,11 +110,11 @@ def create_random_images(num_images, max_classes):
 
     return ims, vectors, labels
 
-def encode_img(arr, format='png'):
+def encode_img(arr):
     # Encode uint8 values array into base64 string for sending.
     image = PIL.Image.fromarray(arr)
     buffered = BytesIO()
-    image.save(buffered, format="JPEG")
+    image.save(buffered, format="JPEG", quality=90)
     img_bytes = base64.b64encode(buffered.getvalue())
     img_str = 'data:image/jpeg;base64,'+img_bytes.decode('ascii')
     return img_str
