@@ -18,7 +18,7 @@ const IMAGE_STATE = {
 }
 
 function random_slice(arr, n) {
-    const i = Math.floor(Math.random()*arr.length - n)
+    const i = Math.max(0, Math.floor(Math.random()*arr.length - n))
     return arr.slice(i, i+n)
 }
 
