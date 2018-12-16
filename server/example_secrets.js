@@ -17,6 +17,8 @@ module.exports = {
             tableName: 'knex_migrations'
         }
     },
+    images_root: 'http://localhost:8888/img/',
+    local_images: true,
     aws: {
         accessKeyId: '',
         secretAccessKey: ''

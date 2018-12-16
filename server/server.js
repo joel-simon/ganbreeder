@@ -12,6 +12,8 @@ const label_names = require('./label_names.js')
 
 const memcache = require('./cache.json')
 
+app.locals.root = secrets.images_root ? secrets.images_root : 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
+
 const IMAGE_STATE = {
     INITIAL: 0,
     SELECTED: 1

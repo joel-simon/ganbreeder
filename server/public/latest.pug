@@ -30,7 +30,6 @@ html
             h3 Recently starred images
 
         .image_container.content
-            - var root = 'https://s3.amazonaws.com/ganbreederpublic/imgs/';
             for image in images
                 a.imglink(href='/i?k='+image.key)
                     img(src=root+image.key+'.jpeg')
