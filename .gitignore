@@ -2,5 +2,6 @@ modules/
 .ipynb_checkpoints/
 server/secrets.js
 server/node_modules/
+server/public/img/
 lambda/
 testing.py
