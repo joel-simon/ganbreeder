@@ -46,3 +46,23 @@ node updatecache.js
 node server.js
 ```
 Your frontend is available at http://localhost:8888/
+
+### docker-compose setup
+
+Make sure that [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/) are installed.
+
+Start the containers:
+```bash
+docker-compose up
+```
+Your frontend is available at http://localhost:8888/, backend at http://localhost:5000/.
+Initial backend setup can take few minutes.
+
+If this is the first time you are running the project you might want to generate some random images:
+```bash
+docker-compose exec server node make_randoms.js
+```
+Restart only frontend server (to avoid backend initialization wait):
+```bash
+docker-compose restart server
+```

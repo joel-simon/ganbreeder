@@ -1,0 +1,32 @@
+version: '3'
+services:
+  db:
+    image: "postgres:12"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ganbreederpostgres
+  gan_server:
+    restart: always
+    build:
+      context: .
+      dockerfile: gan_server/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      PYTHONUNBUFFERED: 0  # to show print statements on docker logs
+    volumes:
+      - ./gan_server:/gan_server
+  server:
+    restart: always
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    volumes:
+      - ./server:/server
+      - ./server/docker_compose_secrets.js:/server/secrets.js
+    ports:
+      - "8888:8888"
+    links:
+      - gan_server
+      - db
