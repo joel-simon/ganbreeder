@@ -16,10 +16,11 @@ module_path = 'https://tfhub.dev/deepmind/biggan-256/2'
 rand_seed = 123
 truncation = 0.5
 
-tf.reset_default_graph()
+tf.compat.v1.disable_eager_execution()
+tf.compat.v1.reset_default_graph()
 print('Loading BigGAN module from:', module_path)
 module = hub.Module(module_path)
-inputs = {k: tf.placeholder(v.dtype, v.get_shape().as_list(), k)
+inputs = {k: tf.compat.v1.placeholder(v.dtype, v.get_shape().as_list(), k)
           for k, v in module.get_input_info_dict().items()}
 output = module(inputs)
 
@@ -30,9 +31,9 @@ random_state = np.random.RandomState(rand_seed)
 dim_z = input_z.shape.as_list()[1]
 vocab_size = input_y.shape.as_list()[1]
 
-initializer = tf.global_variables_initializer()
+initializer = tf.compat.v1.global_variables_initializer()
 
-sess = tf.Session()
+sess = tf.compat.v1.Session()
 sess.run(initializer)
 
 def truncated_z_sample(batch_size):
@@ -187,3 +188,4 @@ if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 5000
     print('port=', port)
     app.run(host='0.0.0.0', debug=True, port=port)
+

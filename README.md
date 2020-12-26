@@ -9,11 +9,15 @@ Pull request are more than welcome :)
 ## How to use
 
 ### Prerequisites
+
 * Install Python 3 + pip (for the GAN server)
+  * Avoid [SSL: CERTIFICATE_VERIFY_FAILED] error by just browse to Applications/Python 3.X and double-click Install Certificates.command.
 * Install NodeJS + npm (for the frontend)
+  * suggested node version : (v12.16.3) in order to avoid Timeout error, ref:  <https://stackoverflow.com/questions/40435315/knex-timeout-acquiring-a-connection-the-pool-is-probably-full-are-you-missing>
 * Install a PostgreSQL server
 
 ### Launch the GAN server
+
 ```bash
 cd gan_server
 # Install dependencies
@@ -21,18 +25,22 @@ pip install -r requirements.txt
 # And go...
 python server.py
 ```
+
 Your GAN server is available at http://localhost:5000/
 
 ### Configure the frontend
 For quick hacking, if you have Docker at your disposal, you can spawn a PostgreSQL database like so:
+
 ```bash
 docker run -p 5432:5432 --name ganbreederpostgres -e POSTGRES_PASSWORD=ganbreederpostgres -d postgres
 ```
+
 With that simple scenario, the database and user would be `postgres` and the password would be `ganbreederpostgres`
 
 Copy the file `server/example_secrets.js` to `secrets.js` and modify it to fit your environment.
 
 ### Launch the frontend
+
 ```bash
 cd server
 npm install
@@ -45,6 +53,7 @@ node updatecache.js
 # And go...
 node server.js
 ```
+
 Your frontend is available at http://localhost:8888/
 
 ### docker-compose setup
@@ -52,17 +61,22 @@ Your frontend is available at http://localhost:8888/
 Make sure that [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/) are installed.
 
 Start the containers:
+
 ```bash
 docker-compose up
 ```
+
 Your frontend is available at http://localhost:8888/, backend at http://localhost:5000/.
 Initial backend setup can take few minutes.
 
 If this is the first time you are running the project you might want to generate some random images:
+
 ```bash
 docker-compose exec server node make_randoms.js
 ```
+
 Restart only frontend server (to avoid backend initialization wait):
+
 ```bash
 docker-compose restart server
 ```
