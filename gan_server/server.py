@@ -1,9 +1,8 @@
 import sys
 import json
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
 import time
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import tensorflow_hub as hub
 import numpy as np
 from scipy.stats import truncnorm
@@ -17,8 +16,10 @@ rand_seed = 123
 truncation = 0.5
 
 tf.reset_default_graph()
+tf.disable_eager_execution()
 print('Loading BigGAN module from:', module_path)
 module = hub.Module(module_path)
+print('BigGAN module loaded')
 inputs = {k: tf.placeholder(v.dtype, v.get_shape().as_list(), k)
           for k, v in module.get_input_info_dict().items()}
 output = module(inputs)
@@ -34,6 +35,7 @@ initializer = tf.global_variables_initializer()
 
 sess = tf.Session()
 sess.run(initializer)
+print('ready!')
 
 def truncated_z_sample(batch_size):
     values = truncnorm.rvs(-2, 2, size=(batch_size, dim_z), random_state=random_state)
@@ -120,7 +122,6 @@ def encode_img(arr):
     return img_str
 
 app = Flask(__name__, static_url_path='') #, static_folder='public', )
-CORS(app)
 
 @app.route('/')
 def index():
